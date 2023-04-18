@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<title>Simulador de farmacología general</title>
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+	<h1>Simulador de farmacología general</h1>
+	<form id="formulario">
+		<label for="vidaMedia">Vida media del fármaco (horas):</label>
+		<input type="number" step="0.01" id="vidaMedia" name="vidaMedia" required>
+
+		<label for="dosis">Dosis (mg):</label>
+		<input type="number" step="0.01" id="dosis" name="dosis" required>
+
+		<label for="intervalo">Intervalo entre dosis (horas):</label>
+		<input type="number" step="0.01" id="intervalo" name="intervalo" required>
+
+		<button type="submit">Calcular concentración</button>
+	</form>
+
+	<div id="grafico"></div>
+
+	<script>
+		const formulario = document.getElementById('formulario');
+		const vidaMedia = document.getElementById('vidaMedia');
+		const dosis = document.getElementById('dosis');
+		const intervalo = document.getElementById('intervalo');
+		const grafico = document.getElementById('grafico');
+
+		function dibujarGrafico(datos) {
+			Plotly.newPlot(grafico, [{ x: datos.tiempo, y: datos.concentracion, type: 'scatter' }], { margin: { t: 0 } });
+		}
+
+		function calcularConcentracion(vidaMedia, dosis, intervalo) {
+			const concentracion = [0];
+			const tiempo = [0];
+
+			let hora = intervalo;
+			let c = dosis / vidaMedia;
+
+			for (let t = intervalo; t <= 200; t += 1) {
+				let cAnterior = concentracion[concentracion.length - 1];
+				c = cAnterior - (cAnterior * 0.5 * (1 / vidaMedia));
+
+				if (hora === t) {
+					c += dosis / vidaMedia;
+					hora += intervalo;
+				}
+
+				concentracion.push(c);
+				tiempo.push(t);
+			}
+
+			return { tiempo, concentracion };
+		}
+
+		formulario.addEventListener('submit', function(evento) {
+			evento.preventDefault();
+			const vidaMediaValor = parseFloat(vidaMedia.value);
+			const dosisValor = parseFloat(dosis.value);
+			const intervaloValor = parseFloat(intervalo.value);
+			const datos = calcularConcentracion(vidaMediaValor, dosisValor, intervaloValor);
+			dibujarGrafico(datos);
+		});
+	</script>
+</body>
+</html>
