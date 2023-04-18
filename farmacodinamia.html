@@ -2,8 +2,27 @@
 <html>
   <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Gráfico de ecuación</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+      .disclaimer {
+        text-align: center;
+        margin-top: 20px;
+        color: red;
+        font-size: 12px;
+      }
+      .author {
+        text-align: center;
+        margin-top: 20px;
+        color: gray;
+        font-size: 12px;
+      }
+    </style>
   </head>
   <body>
     <div id="plot"></div>
@@ -61,10 +80,10 @@
 
       updatePlot();
     </script>
-    <div style="text-align: center; margin-top: 20px; color: red; font-size: 12px;">
+    <div class="disclaimer">
       Las ecuaciones utilizadas en este simulador son adaptaciones sin sustento experimental y no deben utilizarse más que como recurso pedagógico para comprender el comportamiento de la morfología de la curva frente a la variación de los distintos parámetros farmacodinámicos.
     </div>
-    <div style="text-align: center; margin-top: 20px; color: gray; font-size: 12px;">
+    <div class="author">
       Hecho por Santiago M. Chajet
     </div>
   </body>
