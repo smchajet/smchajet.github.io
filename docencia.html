@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de tiempo para temas</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      h1 {
+        text-align: center;
+        margin-top: 20px;
+      }
+      #tema, #tiempo {
+        display: block;
+        margin: 10px 0;
+        width: 100%;
+        padding: 5px;
+        font-size: 16px;
+      }
+      #agregar {
+        display: block;
+        margin: 10px auto;
+        padding: 10px;
+        font-size: 16px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+      }
+      #iniciar {
+        display: block;
+        margin: 20px auto;
+        padding: 15px 30px;
+        font-size: 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 50px;
+      }
+      #lista-temas {
+        margin: 20px 0;
+        padding: 0;
+        list-style: none;
+        text-align: center;
+      }
+      #lista-temas li {
+        margin: 10px 0;
+        font-size: 18px;
+      }
+      #nombre-tema, #tiempo {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 24px;
+      }
+      #tiempo {
+        margin-bottom: 50px;
+      }
+      #barra-progreso {
+        height: 5px;
+        width: 100%;
+        background-color: #ccc;
+        position: fixed;
+        top: 0;
+        left: 0;
+      }
+      #barra-progreso .progreso {
+        height: 100%;
+        background-color: #4CAF50;
+        transition: width 1s linear;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Control de tiempo para temas</h1>
+    <p>Ingresa los temas y su tiempo asignado en minutos:</p>
+    <div>
+      <input type="text" id="tema" placeholder="Tema">
+      <input type="number" id="tiempo" placeholder="Tiempo en minutos">
+      <button id="agregar">Agregar</button>
+    </div>
+    <h2>Temas a cubrir:</h2>
+    <ul id="lista-temas"></ul>
+    <button id="iniciar">Iniciar</button>
+    <h2 id="nombre-tema"></h2>
+    <h2 id="tiempo"></h2>
+    <div id="barra-progreso"><div class="progreso"></div></div>
+    <script>
+      const temas = [];
+      const tiempos = [];
+      let temaActual = 0;
+      let tiempoRestante = 0;
+      let intervalID;
+
+      const temaInput = document.getElementById("tema");
+      const tiempoInput = document.getElementById("tiempo");
+      const listaTemas = document.getElementById("lista-temas");
+      const nombreTema = document.getElementById("nombre-tema");
+      const tiempoMostrado = document.getElementById("tiempo");
+      const barraProgreso = document.querySelector(".progreso");
+  function agregarTema() {
+    const tema = temaInput.value;
+    const tiempo = parseInt(tiempoInput.value);
+    temas.push(tema);
+    tiempos.push(tiempo);
+    const nuevaTarea = document.createElement("li");
+    nuevaTarea.innerText = `${tema}: ${tiempo} minutos`;
+    listaTemas.appendChild(nuevaTarea);
+    temaInput.value = "";
+    tiempoInput.value = "";
+  }
+
+  function actualizarTema() {
+    nombreTema.innerText = temas[temaActual];
+    tiempoRestante = tiempos[temaActual] * 60;
+    tiempoMostrado.innerText = tiempos[temaActual];
+  }
+
+  function actualizarBarraProgreso() {
+    const porcentaje = ((tiempos[temaActual] * 60 - tiempoRestante) / (tiempos[temaActual] * 60)) * 100;
+    barraProgreso.style.width = `${porcentaje}%`;
+  }
+
+  function iniciarCronometro() {
+    intervalID = setInterval(() => {
+      if (tiempoRestante <= 0) {
+        clearInterval(intervalID);
+        temaActual++;
+        if (temaActual < temas.length) {
+          actualizarTema();
+          iniciarCronometro();
+        }
+      } else {
+        tiempoRestante--;
+        tiempoMostrado.innerText = Math.floor(tiempoRestante / 60) + ":" + ("0" + tiempoRestante % 60).slice(-2);
+        actualizarBarraProgreso();
+      }
+    }, 1000);
+  }
+
+  document.getElementById("agregar").addEventListener("click", agregarTema);
+  document.getElementById("iniciar").addEventListener("click", () => {
+    if (temas.length > 0) {
+      actualizarTema();
+      iniciarCronometro();
+    }
+  });
+</script>
+</body>
+</html>
+
