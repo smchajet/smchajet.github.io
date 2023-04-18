@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Gráfico de ecuación</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  </head>
+  <body>
+    <div id="plot"></div>
+    <form>
+      <label for="h">Coeficiente símil Hill:</label>
+      <input type="number" id="h" name="h" value="2">
+      <br>
+      <label for="p">CE50:</label>
+      <input type="number" id="p" name="p" value="50">
+      <br>
+      <label for="a">Alfa:</label>
+      <input type="number" id="a" name="a" value="1">
+      <br>
+      <button type="button" onclick="updatePlot()">Actualizar gráfico</button>
+    </form>
+
+    <script>
+      function updatePlot() {
+        var h = parseFloat(document.getElementById("h").value);
+        var p = parseFloat(document.getElementById("p").value);
+        var a = parseFloat(document.getElementById("a").value);
+
+        var x = Array.from({length: 101}, (_, i) => i);
+        var y = x.map(x_i => (100*(x_i**h))/((x_i**h)+(p**h))*a);
+
+        var trace = {
+          x: x,
+          y: y,
+          type: 'scatter',
+          mode: 'lines',
+          line: {
+            color: 'blue',
+            width: 2
+          }
+        };
+
+        var layout = {
+          xaxis: {
+            title: 'X',
+            range: [0, 100]
+          },
+          yaxis: {
+            title: 'Y'
+          },
+          margin: {
+            t: 30,
+            b: 30,
+            l: 50,
+            r: 50
+          }
+        };
+
+        Plotly.newPlot('plot', [trace], layout);
+      }
+
+      updatePlot();
+    </script>
+    <div style="text-align: center; margin-top: 20px; color: red; font-size: 12px;">
+      Las ecuaciones utilizadas en este simulador son adaptaciones sin sustento experimental y no deben utilizarse más que como recurso pedagógico para comprender el comportamiento de la morfología de la curva frente a la variación de los distintos parámetros farmacodinámicos.
+    </div>
+    <div style="text-align: center; margin-top: 20px; color: gray; font-size: 12px;">
+      Hecho por Santiago M. Chajet
+    </div>
+  </body>
+</html>

@@ -1,128 +1,67 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Simulador de farmacología general</title>
-	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<title>Simulador de Farmacología</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<style>
 		body {
+			background-color: #f2f2f2;
 			font-family: Arial, sans-serif;
-			font-size: 16px;
-			line-height: 1.5;
-			margin: 0;
-			padding: 0;
 		}
-		
-		.container {
-			max-width: 600px;
-			margin: 0 auto;
-			padding: 20px;
-			box-sizing: border-box;
+		.header {
+			background-image: url('https://images.unsplash.com/photo-1609055195762-2c2d02f51dc9');
+			background-size: cover;
+			background-position: center;
+			height: 200px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			color: white;
+			font-size: 36px;
+			font-weight: bold;
+			text-shadow: 2px 2px #444444;
 		}
-		
-		h1 {
-			font-size: 28px;
-			margin: 20px 0;
-			text-align: center;
+		.buttons {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			align-items: center;
+			margin: 20px;
 		}
-		
-		form {
-			margin: 20px 0;
-		}
-		
-		label {
-			display: block;
-			margin-bottom: 10px;
-		}
-		
-		input[type="number"] {
-			width: 100%;
-			padding: 10px;
-			border-radius: 5px;
-			border: 1px solid #ccc;
-			margin-bottom: 20px;
-			box-sizing: border-box;
-		}
-		
-		button[type="submit"] {
-			background-color: #007bff;
-			color: #fff;
-			padding: 10px;
+		button {
+			background-color: #4CAF50;
+			color: white;
+			padding: 14px 20px;
+			margin: 10px;
 			border: none;
 			border-radius: 5px;
+			font-size: 20px;
 			cursor: pointer;
+			transition: background-color 0.3s;
 		}
-		
-		#grafico {
-			height: 300px;
+		button:hover {
+			background-color: #3e8e41;
+		}
+		.disclaimer {
+			color: red;
+			font-size: 12px;
+			margin-top: 20px;
+			text-align: center;
 		}
 	</style>
 </head>
 <body>
-	<div class="container">
-		<h1>Simulador de farmacología general (Cinética de Acumulación)</h1>
-		<h2>No apto para uso médico</h2>
-		<form id="formulario">
-			<label for="vidaMedia">Vida media del fármaco (horas):</label>
-			<input type="number" step="0.01" id="vidaMedia" name="vidaMedia" required>
-
-			<label for="dosis">Dosis (mg):</label>
-			<input type="number" step="0.01" id="dosis" name="dosis" required>
-
-			<label for="intervalo">Intervalo entre dosis (horas):</label>
-			<input type="number" step="0.01" id="intervalo" name="intervalo" required>
-
-			<button type="submit">Calcular concentración</button>
-		</form>
-
-		<div id="grafico"></div>
+	<div class="header">
+		<h1>Simulador de Farmacología</h1>
 	</div>
-
-	<script>
-		const formulario = document.getElementById('formulario');
-		const vidaMedia = document.getElementById('vidaMedia');
-		const dosis = document.getElementById('dosis');
-		const intervalo = document.getElementById('intervalo');
-		const grafico = document.getElementById('grafico');
-
-		function dibujarGrafico(datos) {
-			Plotly.newPlot(grafico, [{ x: datos.tiempo, y: datos.concentracion, type: 'scatter' }], { margin: { t: 0 } });
-		}
-
-		function calcularConcentracion(vidaMedia, dosis, intervalo) {
-			const concentracion = [0];
-			const tiempo = [0];
-
-			let hora = intervalo;
-let c = dosis / vidaMedia;
-
-for (let t = intervalo; t <= 200; t += 1) {
-	let cAnterior = concentracion[concentracion.length - 1];
-	c = cAnterior - (cAnterior * 0.5 * (1 / vidaMedia));
-
-	if (hora === t) {
-		c += dosis / vidaMedia;
-		hora += intervalo;
-	}
-
-	concentracion.push(c);
-	tiempo.push(t);
-}
-
-return { tiempo, concentracion };
-}
-
-formulario.addEventListener('submit', function(evento) {
-evento.preventDefault();
-const vidaMediaValor = parseFloat(vidaMedia.value);
-const dosisValor = parseFloat(dosis.value);
-const intervaloValor = parseFloat(intervalo.value);
-const datos = calcularConcentracion(vidaMediaValor, dosisValor, intervaloValor);
-dibujarGrafico(datos);
-});
-
-</script>
-<p style="text-align: center">Hecho por Santiago M. Chajet</p>
+	<div class="buttons">
+		<button onclick="window.location.href='https://smchajet.github.io/farmacocinetica'">Farmacocinética</button>
+		<button onclick="window.location.href='https://smchajet.github.io/farmacodinamia'">Farmacodinamia</button>
+	</div>
+	<div class="disclaimer">
+		Las siguientes son herramientas de uso educativo y calculan valores con fórmulas sin validación. El autor no se responsabiliza por su utilización ni por las consecuencias que deriven de la misma.
+	</div>
+	<p style="text-align: center;">Creado por Santiago M. Chajet</p>
 </body>
 </html>
