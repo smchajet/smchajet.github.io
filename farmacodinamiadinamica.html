@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gráfico de ecuación</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+      .disclaimer {
+        text-align: center;
+        margin-top: 20px;
+        color: red;
+        font-size: 12px;
+      }
+      .author {
+        text-align: center;
+        margin-top: 20px;
+        color: gray;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="plot"></div>
+    <form>
+      <label for="h">Coeficiente símil Hill:</label>
+      <input type="range" id="h" name="h" min="1" max="10" step="0.1" value="2" onchange="updatePlot()">
+      <br>
+      <label for="p">CE50:</label>
+      <input type="range" id="p" name="p" min="1" max="100" step="0.1" value="50" onchange="updatePlot()">
+      <br>
+      <label for="a">Alfa:</label>
+      <input type="range" id="a" name="a" min="1" max="10" step="0.1" value="1" onchange="updatePlot()">
+    </form>
+<script>
+  function updatePlot() {
+    var h = parseFloat(document.getElementById("h").value);
+    var p = parseFloat(document.getElementById("p").value);
+    var a = parseFloat(document.getElementById("a").value);
+
+    var x = Array.from({length: 101}, (_, i) => i);
+    var y = x.map(x_i => (100*(x_i**h))/((x_i**h)+(p**h))*a);
+
+    var trace = {
+      x: x,
+      y: y,
+      type: 'scatter',
+      mode: 'lines',
+      line: {
+        color: 'blue',
+        width: 2
+      }
+    };
+
+    var layout = {
+      xaxis: {
+        title: 'X',
+        range: [0, 100]
+      },
+      yaxis: {
+        title: 'Y'
+      },
+      margin: {
+        t: 30,
+        b: 30,
+        l: 50,
+        r: 50
+      }
+    };
+
+    Plotly.newPlot('plot', [trace], layout);
+  }
+
+  updatePlot();
+</script>
+<div class="disclaimer">
+  Las ecuaciones utilizadas en este simulador son adaptaciones sin sustento experimental y no deben utilizarse más que como recurso pedagógico para comprender el comportamiento de la morfología de la curva frente a la variación de los distintos parámetros farmacodinámicos.
+</div>
+<div class="author">
+  Hecho por Santiago M. Chajet
+</div>
+</body>
+</html>
