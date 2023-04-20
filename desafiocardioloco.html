@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Desafio CARDIOLOCURA</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 0;
+			background-color: #f7f7f7;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			height: 100vh;
+		}
+		
+		.container {
+			background-color: #fff;
+			border-radius: 10px;
+			padding: 30px;
+			box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+			text-align: center;
+		}
+		
+		h1 {
+			font-size: 36px;
+			margin-bottom: 20px;
+		}
+		
+		p {
+			font-size: 24px;
+			margin-bottom: 20px;
+		}
+		
+		button {
+			font-size: 18px;
+			padding: 10px 20px;
+			margin: 10px;
+			border: none;
+			border-radius: 5px;
+			background-color: #007bff;
+			color: #fff;
+			cursor: pointer;
+		}
+		
+		#score {
+			font-size: 48px;
+			margin-top: 20px;
+		}
+		
+		#rank {
+			font-size: 24px;
+			margin-top: 10px;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1>Desafío CARDIOLOCURA</h1>
+		<p>Selecciona la categoría correspondiente al betabloqueante que se muestra:</p>
+		<p id="drug"></p>
+		<button id="btn1">Primera generación</button>
+		<button id="btn2">Segunda generación</button>
+		<button id="btn3">Tercera generación no selectivo de Beta 1</button>
+		<button id="btn4">Tercera generación selectivo de Beta 1</button>
+		<p>Puntaje: <span id="score">0</span></p>
+		<p>Rango: <span id="rank">Ignato</span></p>
+	</div>
+	
+	<script>
+		// Lista de betabloqueantes de uso clínico
+		const drugs = [
+			{
+				name: "Propranolol",
+				category: "Primera generación"
+			},
+			{
+				name: "Timolol",
+				category: "Primera generación"
+			},
+			{
+				name: "Nadolol",
+				category: "Primera generación"
+			},
+			{
+				name: "Pindolol",
+				category: "Segunda generación"
+			},
+			{
+				name: "Atenolol",
+				category: "Segunda generación"
+			},
+			{
+				name: "Metoprolol",
+				category: "Segunda generación"
+			},
+			{
+				name: "Carvedilol",
+				category: "Tercera generación no selectivo de Beta 1"
+			},
+			{
+				name: "Labetalol",
+				category: "Tercera generación noselectivo de Beta 1"
+},
+{
+name: "Bisoprolol",
+category: "Tercera generación selectivo de Beta 1"
+},
+{
+name: "Celiprolol",
+category: "Tercera generación selectivo de Beta 1"
+},
+{
+name: "Esmolol",
+category: "Tercera generación selectivo de Beta 1"
+}
+];
+	let score = 0;
+	let rank = "Ignato";
+	let drugIndex = Math.floor(Math.random() * drugs.length);
+	let countdown;
+	
+	const drugElement = document.getElementById("drug");
+	const btn1 = document.getElementById("btn1");
+	const btn2 = document.getElementById("btn2");
+	const btn3 = document.getElementById("btn3");
+	const btn4 = document.getElementById("btn4");
+	const scoreElement = document.getElementById("score");
+	const rankElement = document.getElementById("rank");
+	
+	// Función para actualizar la pantalla con el betabloqueante y el puntaje
+	function updateScreen() {
+		drugElement.textContent = drugs[drugIndex].name;
+		scoreElement.textContent = score;
+		rankElement.textContent = rank;
+	}
+	
+	// Función para actualizar el rango según el puntaje
+	function updateRank() {
+		if (score < 3) {
+			rank = "Ignato";
+		} else if (score >= 3 && score < 5) {
+			rank = "Novato";
+		} else if (score >= 5 && score < 10) {
+			rank = "Canchero";
+		} else if (score >= 10 && score < 15) {
+			rank = "Crack";
+		} else if (score >= 15 && score < 30) {
+			rank = "Bestia de la farmacología adrenérgica";
+		} else {
+			rank = "DEMENTE DE LOS BETABLOQUEANTES";
+		}
+		rankElement.textContent = rank;
+	}
+	
+	// Función para procesar la respuesta del usuario
+	function processAnswer(answer) {
+		if (answer === drugs[drugIndex].category) {
+			score += 1;
+		} else {
+			score -= 5;
+		}
+		updateRank();
+		drugIndex = Math.floor(Math.random() * drugs.length);
+		updateScreen();
+	}
+	
+	// Función para iniciar el temporizador y bajar el puntaje cada 3 segundos
+	function startCountdown() {
+		countdown = setInterval(() => {
+			score -= 1;
+			updateRank();
+			updateScreen();
+		}, 3000);
+	}
+	
+	// Inicializar la pantalla
+	updateScreen();
+	startCountdown();
+	
+	// Agregar los listeners de los botones
+	btn1.addEventListener("click", () => {
+		processAnswer("Primera generación");
+	});
+	
+	btn2.addEventListener("click", () => {
+		processAnswer("Segunda generación");
+	});
+	
+	btn3.addEventListener("click", () => {
+		processAnswer("Tercera generación no selectivo de Beta 1");
+	});
+	
+	btn4.addEventListener("click", () => {
+		processAnswer("Tercera generación selectivo de Beta 1");
+	});
+</script>
+</body>
+</html>
