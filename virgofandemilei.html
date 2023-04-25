@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Libertario virtual</title>
+    <script>
+      function enviarMensaje() {
+        var mensaje = document.getElementById("mensaje").value;
+        var respuestas = ["O sea, no podés justificar tu política solo porque ha existido durante mucho tiempo, digamos siglos. Necesitamos evaluar si sigue siendo relevante y necesario hoy en día, o sea, si está en línea con los valores actuales.",
+"Lo que decís es una falacia ad hominem, o sea, estás atacando a la persona en lugar de a su argumento. Eso no es justo ni efectivo, digamos que no contribuye a una discusión constructiva.",
+"Estás cometiendo la falacia ad baculum, o sea, estás tratando de obligar a la gente a aceptar tus ideas utilizando amenazas o consecuencias negativas. Eso no es justo ni ético, digamos que necesitás argumentos sólidos para persuadir a los demás.",
+"Lo que estás diciendo es una falacia ad consequentiam, o sea, estás argumentando que una política es justa o efectiva solo porque produce un resultado que te gusta. Eso no es suficiente, digamos que necesitamos analizar si la política en sí misma es ética y justa.",
+"Estás utilizando la falacia de Reductio ad Hitlerum, o sea, estás comparando a tu oponente con Hitler o un régimen nazi para desacreditar su posición. Eso no es justificado ni constructivo, digamos que deberíamos enfocarnos en los argumentos en sí mismos.",
+"Lo que estás haciendo es una falsa equivalencia, o sea, estás comparando dos cosas que no son realmente iguales para sugerir que son equivalentes. Digamos que esto no es justo ni lógico, necesitamos evaluar cada cosa en su propio contexto.",
+"Estás utilizando la falacia ad populum, o sea, argumentando que algo es verdadero o correcto solo porque muchas personas lo creen. Digamos que esto no es un argumento válido, ya que la mayoría no siempre tiene razón.",
+"Estás utilizando la falacia Tu Quoque, o sea, acusando a tu oponente de hacer algo similar o igualmente malo para desviar la atención de tu propia falla o error. Digamos que esto no es justificado ni relevante, debemos abordar cada argumento en su propio mérito.",
+"O sea, no podés justificar tu política solo porque ha existido durante mucho tiempo, digamos por siglos y siglos, o sea. Necesitamos evaluar si sigue siendo relevante y necesario hoy en día, digamos en el contexto actual, o sea, si está en línea con los valores y necesidades de la sociedad moderna, digamos, o sea, en el siglo XXI.",
+"Lo que decís es una falacia ad hominem, o sea, estás atacando a la persona en lugar de a su argumento, digamos, en vez de abordar el asunto en cuestión, o sea. Eso no es justo ni efectivo, digamos que no contribuye a una discusión constructiva, o sea, no ayuda a llegar a una solución lógica y razonable, digamos, o sea, de manera justa y equitativa.",
+"Estás cometiendo la falacia ad baculum, o sea, estás tratando de obligar a la gente a aceptar tus ideas utilizando amenazas o consecuencias negativas, digamos, o sea."];
+        var respuesta = respuestas[Math.floor(Math.random() * respuestas.length)];
+        var chat = document.getElementById("chat");
+        chat.innerHTML += "<p><strong>Tú:</strong> " + mensaje + "</p><p><strong>Libertario promedio:</strong> " + respuesta + "</p>";
+        document.getElementById("mensaje").value = "";
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Simulador de libertario promedio</h1>
+    <div id="chat"></div>
+    <input type="text" id="mensaje" placeholder="Escribe tu mensaje aquí...">
+    <button onclick="enviarMensaje()">Enviar</button>
+  </body>
+</html>
