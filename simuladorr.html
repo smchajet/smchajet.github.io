@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Simulador de Adrenergia</title>
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f2f2f2;
+			padding: 10px;
+		}
+		h1 {
+			text-align: center;
+		}
+		#container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			margin: 0 auto;
+			max-width: 400px;
+		}
+		#heart-rate-chart, #blood-pressure-chart {
+			width: 100%;
+			height: 100px;
+			margin-bottom: 20px;
+		}
+		.slider-container {
+			width: 100%;
+			margin-bottom: 20px;
+		}
+		.slider-label {
+			font-size: 14px;
+			margin-bottom: 5px;
+		}
+		.slider {
+			width: 100%;
+			-webkit-appearance: none;
+			appearance: none;
+			height: 5px;
+			border-radius: 5px;
+			background-color: #ddd;
+			outline: none;
+			opacity: 0.7;
+			-webkit-transition: .2s;
+			transition: opacity .2s;
+		}
+		.slider::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			appearance: none;
+			width: 15px;
+			height: 15px;
+			border-radius: 50%;
+			background-color: #4CAF50;
+			cursor: pointer;
+		}
+		.slider::-moz-range-thumb {
+			width: 15px;
+			height: 15px;
+			border-radius: 50%;
+			background-color: #4CAF50;
+			cursor: pointer;
+		}
+	</style>
+</head>
+<body>
+	<h1>Simulador de Adrenergia</h1>
+	<div id="container">
+		<div id="heart-rate-chart"></div>
+		<div class="slider-container">
+			<label for="beta1-slider" class="slider-label">Agonismo Beta 1</label>
+			<input type="range" min="0" max="10" value="0" class="slider" id="beta1-slider">
+		</div>
+		<div class="slider-container">
+			<label for="beta2-slider" class="slider-label">Agonismo Beta 2</label>
+			<input type="range" min="0" max="10" value="0" class="slider" id="beta2-slider">
+		</div>
+		<div class class="slider-container">
+			<label for="alfa1-slider" class="slider-label">Agonismo Alfa 1</label>
+			<input type="range" min="0" max="10" value="0" class="slider" id="alfa1-slider">
+		</div>
+		<div class="slider-container">
+			<label for="alfa2-slider" class="slider-label">Agonismo Alfa 2</label>
+<input type="range" min="0" max="10" value="0" class="slider" id="alfa2-slider">
+</div>
+<div id="blood-pressure-chart"></div>
+</div>
+<script>
+// Obtener elementos del DOM
+const beta1Slider = document.getElementById("beta1-slider");
+const beta2Slider = document.getElementById("beta2-slider");
+const alfa1Slider = document.getElementById("alfa1-slider");
+const alfa2Slider = document.getElementById("alfa2-slider");
+const heartRateChart = document.getElementById("heart-rate-chart");
+const bloodPressureChart = document.getElementById("blood-pressure-chart");
+	// Configuración de los gráficos
+	const heartRateData = {
+		type: "indicator",
+		mode: "gauge+number",
+		value: 60,
+		title: { text: "Frecuencia Cardíaca (lpm)" },
+		gauge: {
+			axis: { range: [null, 120] },
+			steps: [
+				{ range: [0, 60], color: "#55aaff" },
+				{ range: [60, 120], color: "#ff5555" }
+			],
+			threshold: {
+				line: { color: "black", width: 4 },
+				thickness: 0.75,
+				value: 90
+			}
+		}
+	};
+	
+	const bloodPressureData = {
+		type: "indicator",
+		mode: "gauge+number",
+		value: 120,
+		title: { text: "Presión Arterial (mmHg)" },
+		gauge: {
+			axis: { range: [null, 200] },
+			steps: [
+				{ range: [0, 80], color: "#55aaff" },
+				{ range: [80, 120], color: "#55ff55" },
+				{ range: [120, 200], color: "#ff5555" }
+			],
+			threshold: {
+				line: { color: "black", width: 4 },
+				thickness: 0.75,
+				value: 160
+			}
+		}
+	};
+	
+	const heartRateLayout = { margin: { t: 0, b: 0 } };
+	const bloodPressureLayout = { margin: { t: 0, b: 0 } };
+	
+	// Crear los gráficos
+	Plotly.newPlot(heartRateChart, [heartRateData], heartRateLayout);
+	Plotly.newPlot(bloodPressureChart, [bloodPressureData], bloodPressureLayout);
+	
+	// Actualizar los valores de los gráficos al cambiar los valores de los sliders
+	beta1Slider.addEventListener("input", updateCharts);
+	beta2Slider.addEventListener("input", updateCharts);
+	alfa1Slider.addEventListener("input", updateCharts);
+	alfa2Slider.addEventListener("input", updateCharts);
+
+	function updateCharts() {
+		const beta1Value = parseFloat(beta1Slider.value);
+		const beta2Value = parseFloat(beta2Slider.value);
+		const alfa1Value = parseFloat(alfa1Slider.value);
+		const alfa2Value = parseFloat(alfa2Slider.value);
+		
+		// Actualizar la frecuencia cardíaca
+		let heartRateValue = 60;
+		heartRateValue += beta1Value * 20;
+		heartRateValue += beta2Value * 10;
+		document.getElementById("heart-rate-chart").data[0].value = heartRateValue;
+		Plotly.redraw(heartRateChart);
+
+		// Actualizar la presión arterial
+		let bloodPressureValue = 120;
+		bloodPressureValue += alfa1Value * 10;
+		bloodPressureValue += alfa2Value * 20;
+		bloodPressureValue += beta1Value * 1;
+		bloodPressureValue -= beta2Value * 5;
+
+		if (bloodPressureValue < 0) {
+			bloodPressureValue = 0;
+		}
+
+		document.getElementById("blood-pressure-chart").data[0].value = bloodPressureValue;
+		Plotly.redraw(bloodPressureChart);
+	}
+</script>
+</body>
+</html>
