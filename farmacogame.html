@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Farmacocinética Dinámica</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f4f4f4;
+    }
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .button {
+        padding: 10px 20px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .button.red {
+        background-color: #f44336;
+    }
+    .button.red:hover {
+        background-color: #d32f2f;
+    }
+    .input-field {
+        margin-bottom: 20px;
+    }
+    .label {
+        font-weight: bold;
+    }
+    .bar-container {
+        width: 100%;
+        height: 30px;
+        background-color: #ddd;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        position: relative;
+    }
+    .bar {
+        height: 100%;
+        background-color: #4caf50;
+        border-radius: 5px;
+        transition: width 0.1s linear;
+    }
+    .bar-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-weight: bold;
+    }
+    .chart-container {
+        margin-top: 20px;
+    }
+    .signature {
+        text-align: center;
+        margin-top: 20px;
+        font-style: italic;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2 style="text-align: center;">Farmacocinética Dinámica</h2>
+    <div class="input-field">
+        <label for="halfLife" class="label">Vida Media (segundos):</label>
+        <input type="number" id="halfLife" min="1" step="1" required>
+    </div>
+    <div class="input-field">
+        <label for="volume" class="label">Volumen de Compartimento Sistémico (L):</label>
+        <input type="number" id="volume" min="0.1" step="0.1" required>
+    </div>
+    <button class="button" onclick="startSimulation()">Comenzar</button>
+    <div class="bar-container">
+        <span class="bar-text">Concentración Plasmática</span>
+        <div class="bar" id="bar" style="width: 0;"></div>
+    </div>
+    <p>Concentración Plasmática: <span id="concentration"></span> mg/L</p>
+    <p>Dosis Eliminada por Segundo: <span id="eliminationRate"></span> mg/s</p>
+    <div class="input-field">
+        <label for="dose" class="label">Dosis (mg):</label>
+        <input type="number" id="dose" min="0" step="1" required>
+    </div>
+    <button class="button" onclick="administerDose()">Administrar</button>
+    <button class="button red" onclick="injureKidney()">Injuriar riñón</button>
+    <button class="button red" onclick="restoreKidneyFunction()">Hidratar al paciente<span style="margin-left: 5px;">&#10006;</span></button>
+    <div class="bar-container">
+        <span class="bar-text">Función Renal</span>
+        <div class="bar" id="renalBar" style="width: 100%;"></div>
+    </div>
+    <div style="text-align: center; font-weight: bold;">Función Renal: <span id="renalPercentage">100%</span></div>
+    <div class="chart-container">
+        <canvas id="myChart" width="800" height="400"></canvas>
+    </div>
+    <div class="signature">Creado por Santiago M. Chajet</div>
+</div>
+
+<script>
+    let timer;
+    let originalHalfLife;
+    let halfLife;
+    let volume;
+    let concentration = 0;
+    let timeSeries = [];
+    let concentrationSeries = [];
+    let eliminationRate = 0;
+    let renalFunction = 1;
+    let chart;
+
+    function startSimulation() {
+        clearInterval(timer);
+        originalHalfLife = parseInt(document.getElementById("halfLife").value);
+        halfLife = originalHalfLife / renalFunction;
+        volume = parseFloat(document.getElementById("volume").value);
+        concentration = 0;
+        timeSeries = [];
+        concentrationSeries = [];
+        eliminationRate = 0;
+        updateProgress();
+        timer = setInterval(updateProgress, 1000);
+        setInterval(removeOldData, 60000); // Remover datos antiguos cada 60 segundos
+    }
+
+    function updateProgress() {
+        concentration = concentration / 2 ** (1 / halfLife);
+        let progressBar = document.getElementById("bar");
+        let concentrationDisplay = document.getElementById("concentration");
+        let concentrationPerLiter = concentration / volume; // Concentración por litro
+        let eliminationPerSecond = concentrationPerLiter / halfLife; // Eliminación por segundo
+        progressBar.style.width = (concentrationPerLiter * 100).toFixed(2) + "%"; // converting concentration to mg/L
+        concentrationDisplay.textContent = (concentrationPerLiter).toFixed(2);
+        document.getElementById("eliminationRate").textContent = eliminationPerSecond.toFixed(2);
+
+        timeSeries.push(new Date().toLocaleTimeString());
+        concentrationSeries.push(concentrationPerLiter.toFixed(2));
+        updateChart();
+    }
+
+    function administerDose() {
+        let dose = parseFloat(document.getElementById("dose").value);
+        concentration += dose;
+        updateProgress();
+    }
+
+    function removeOldData() {
+        if (timeSeries.length > 60) { // Remover datos antiguos después de 60 segundos
+            timeSeries.shift();
+            concentrationSeries.shift();
+        }
+        updateChart();
+    }
+
+    function injureKidney() {
+        if (renalFunction > 0) {
+            renalFunction -= 0.1;
+            updateRenalFunctionBar();
+            halfLife = originalHalfLife / renalFunction;
+        }
+    }
+
+    function restoreKidneyFunction() {
+        renalFunction = 1;
+        updateRenalFunctionBar();
+        halfLife = originalHalfLife / renalFunction;
+    }
+
+    function updateRenalFunctionBar() {
+        let renalBar = document.getElementById("renalBar");
+        renalBar.style.width = (renalFunction * 100).toFixed(2) + "%";
+        let renalPercentage = document.getElementById("renalPercentage");
+        renalPercentage.textContent = (renalFunction * 100).toFixed(0) + "%";
+        // Cambiar color de la barra según el valor de la función renal
+        if (renalFunction < 0.5) {
+            renalBar.style.backgroundColor = "#ff6666"; // Rojo
+        } else if (renalFunction < 0.8) {
+            renalBar.style.backgroundColor = "#ffcc66"; // Amarillo
+        } else {
+            renalBar.style.backgroundColor = "#66ff66"; // Verde
+        }
+    }
+
+    function updateChart() {
+        if (chart) {
+            chart.data.labels = timeSeries;
+            chart.data.datasets[0].data = concentrationSeries;
+            chart.update();
+        } else {
+            var ctx = document.getElementById('myChart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: timeSeries,
+                    datasets: [{
+                        label: 'Concentración (mg/L)',
+                        data: concentrationSeries,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Tiempo'
+                            }
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Concentración (mg/L)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+</script>
+
+</body>
+</html>
