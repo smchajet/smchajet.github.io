@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checklist de Medicina Interna</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #eef2f3;
+    }
+    /* Sidebar lateral */
+    #sidebar {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100%;
+      background-color: #007BFF;
+      color: #fff;
+      transition: left 0.3s;
+      padding-top: 60px;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+    #sidebar.active {
+      left: 0;
+    }
+    #sidebar h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    #sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    #sidebar ul li {
+      padding: 15px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      cursor: pointer;
+    }
+    #sidebar ul li:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
+    /* Header */
+    .header {
+      background: #007BFF;
+      color: #fff;
+      padding: 15px;
+      font-size: 1.5em;
+      display: flex;
+      align-items: center;
+    }
+    .hamburger {
+      font-size: 1.5em;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    /* Contenido principal */
+    .container {
+      margin: 20px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .checklist-title {
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 1.4em;
+      font-weight: bold;
+      color: #333;
+    }
+    .checklist-item {
+      font-size: 1.2em;
+      margin: 30px 0;
+      text-align: center;
+      color: #555;
+    }
+    .progress {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #777;
+    }
+    .confirm-btn {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      font-size: 1.2em;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+      background: #28a745;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .confirm-btn:hover {
+      background: #218838;
+    }
+  </style>
+</head>
+<body>
+  <!-- Menú lateral -->
+  <div id="sidebar">
+    <h2>Listas</h2>
+    <ul id="menu">
+      <!-- Se llenan dinámicamente -->
+    </ul>
+  </div>
+  <!-- Header con botón de menú -->
+  <div class="header">
+    <span class="hamburger" id="hamburger">&#9776;</span>
+    Checklist de Medicina Interna
+  </div>
+  <!-- Contenido principal -->
+  <div class="container">
+    <div class="checklist-title" id="checklistTitle"></div>
+    <div class="progress" id="progress"></div>
+    <div class="checklist-item" id="checklistItem"></div>
+    <button class="confirm-btn" id="confirmButton">Confirmar</button>
+  </div>
+
+  <script>
+    // Arreglo de checklists: para agregar más listas, añade nuevos objetos aquí.
+    const checklists = [
+      {
+        title: "Evaluación Inicial",
+        items: [
+          "Verificar signos vitales",
+          "Revisar historial médico",
+          "Confirmar alergias conocidas",
+          "Evaluar estado de conciencia",
+          "Realizar examen físico general"
+        ]
+      },
+      {
+        title: "Tratamiento de Urgencias",
+        items: [
+          "Establecer acceso venoso",
+          "Administrar oxígeno si es necesario",
+          "Iniciar monitoreo cardíaco",
+          "Preparar medicamentos de emergencia"
+        ]
+      }
+      // Agrega más checklists según necesites.
+    ];
+
+    let currentChecklist = null;
+    let currentItemIndex = 0;
+
+    // Elementos del DOM
+    const menu = document.getElementById('menu');
+    const checklistTitle = document.getElementById('checklistTitle');
+    const checklistItem = document.getElementById('checklistItem');
+    const confirmButton = document.getElementById('confirmButton');
+    const progress = document.getElementById('progress');
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.getElementById('hamburger');
+
+    // Alterna la visibilidad del menú lateral
+    hamburger.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+    });
+
+    // Rellena el menú lateral con las opciones disponibles
+    function populateMenu() {
+      menu.innerHTML = "";
+      checklists.forEach((checklist, index) => {
+        const li = document.createElement('li');
+        li.textContent = checklist.title;
+        li.addEventListener('click', () => {
+          startChecklist(index);
+          // Oculta el menú lateral después de seleccionar
+          sidebar.classList.remove('active');
+        });
+        menu.appendChild(li);
+      });
+    }
+
+    // Inicia el checklist seleccionado
+    function startChecklist(index) {
+      currentChecklist = checklists[index];
+      currentItemIndex = 0;
+      checklistTitle.textContent = currentChecklist.title;
+      confirmButton.textContent = "Confirmar";
+      showCurrentItem();
+    }
+
+    // Muestra el ítem actual y actualiza la barra de progreso
+    function showCurrentItem() {
+      if (currentItemIndex < currentChecklist.items.length) {
+        checklistItem.textContent = currentChecklist.items[currentItemIndex];
+        progress.textContent = `Paso ${currentItemIndex + 1} de ${currentChecklist.items.length}`;
+      } else {
+        checklistItem.textContent = "Checklist completado.";
+        progress.textContent = "";
+        confirmButton.textContent = "Reiniciar";
+      }
+    }
+
+    // Evento para confirmar el ítem actual y avanzar al siguiente
+    confirmButton.addEventListener('click', () => {
+      if (currentItemIndex < currentChecklist.items.length) {
+        currentItemIndex++;
+        showCurrentItem();
+      } else {
+        currentItemIndex = 0;
+        confirmButton.textContent = "Confirmar";
+        showCurrentItem();
+      }
+    });
+
+    // Inicialización
+    populateMenu();
+    startChecklist(0);
+  </script>
+</body>
+</html>
