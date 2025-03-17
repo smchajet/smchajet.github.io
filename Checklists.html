@@ -10,7 +10,7 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #eef2f3;
     }
-    /* Sidebar lateral */
+    /* Menú lateral */
     #sidebar {
       position: fixed;
       top: 0;
@@ -66,6 +66,7 @@
       background: #fff;
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      position: relative;
     }
     .checklist-title {
       text-align: center;
@@ -79,27 +80,79 @@
       margin: 30px 0;
       text-align: center;
       color: #555;
+      opacity: 1;
+      transition: opacity 0.3s ease;
     }
     .progress {
       text-align: center;
       margin-bottom: 20px;
       color: #777;
+      opacity: 1;
+      transition: opacity 0.3s ease;
     }
-    .confirm-btn {
-      display: block;
-      width: 100%;
+    .button-container {
+      display: flex;
+      justify-content: space-between;
+    }
+    .action-btn {
+      flex: 1;
       padding: 15px;
-      font-size: 1.2em;
-      margin: 10px 0;
+      font-size: 1.1em;
+      margin: 10px 5px;
       border: none;
       border-radius: 5px;
-      background: #28a745;
       color: #fff;
       cursor: pointer;
       transition: background 0.3s;
     }
+    .confirm-btn {
+      background: #28a745;
+    }
     .confirm-btn:hover {
       background: #218838;
+    }
+    .pending-btn {
+      background: #ffc107;
+    }
+    .pending-btn:hover {
+      background: #e0a800;
+    }
+    /* Pendientes container */
+    #pendingContainer {
+      margin-top: 20px;
+      display: none;
+      border-top: 1px solid #ccc;
+      padding-top: 15px;
+    }
+    #pendingContainer h3 {
+      text-align: center;
+      margin-bottom: 10px;
+      color: #333;
+    }
+    #pendingList {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      color: #555;
+    }
+    #pendingList li {
+      margin-bottom: 5px;
+    }
+    .share-btn {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      font-size: 1.1em;
+      margin-top: 15px;
+      border: none;
+      border-radius: 5px;
+      background: #25D366;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .share-btn:hover {
+      background: #1DA851;
     }
   </style>
 </head>
@@ -121,7 +174,15 @@
     <div class="checklist-title" id="checklistTitle"></div>
     <div class="progress" id="progress"></div>
     <div class="checklist-item" id="checklistItem"></div>
-    <button class="confirm-btn" id="confirmButton">Confirmar</button>
+    <div class="button-container">
+      <button class="action-btn confirm-btn" id="confirmButton">Confirmar</button>
+      <button class="action-btn pending-btn" id="pendingButton">Pendiente</button>
+    </div>
+    <div id="pendingContainer">
+      <h3>Pendientes</h3>
+      <ul id="pendingList"></ul>
+      <button class="share-btn" id="shareButton">Compartir por WhatsApp</button>
+    </div>
   </div>
 
   <script>
@@ -151,15 +212,20 @@
 
     let currentChecklist = null;
     let currentItemIndex = 0;
+    let pendingItems = [];
 
     // Elementos del DOM
     const menu = document.getElementById('menu');
     const checklistTitle = document.getElementById('checklistTitle');
     const checklistItem = document.getElementById('checklistItem');
     const confirmButton = document.getElementById('confirmButton');
+    const pendingButton = document.getElementById('pendingButton');
     const progress = document.getElementById('progress');
     const sidebar = document.getElementById('sidebar');
     const hamburger = document.getElementById('hamburger');
+    const pendingContainer = document.getElementById('pendingContainer');
+    const pendingList = document.getElementById('pendingList');
+    const shareButton = document.getElementById('shareButton');
 
     // Alterna la visibilidad del menú lateral
     hamburger.addEventListener('click', () => {
@@ -181,12 +247,14 @@
       });
     }
 
-    // Inicia el checklist seleccionado
+    // Inicia el checklist seleccionado y reinicia los pendientes
     function startChecklist(index) {
       currentChecklist = checklists[index];
       currentItemIndex = 0;
+      pendingItems = [];
       checklistTitle.textContent = currentChecklist.title;
       confirmButton.textContent = "Confirmar";
+      pendingContainer.style.display = "none";
       showCurrentItem();
     }
 
@@ -199,20 +267,66 @@
         checklistItem.textContent = "Checklist completado.";
         progress.textContent = "";
         confirmButton.textContent = "Reiniciar";
+        // Si hay pendientes, se muestran
+        if (pendingItems.length > 0) {
+          displayPendingItems();
+        }
       }
     }
 
-    // Evento para confirmar el ítem actual y avanzar al siguiente
+    // Muestra la lista de pendientes y el botón para compartir
+    function displayPendingItems() {
+      pendingList.innerHTML = "";
+      pendingItems.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        pendingList.appendChild(li);
+      });
+      pendingContainer.style.display = "block";
+    }
+
+    // Función para compartir pendientes por WhatsApp
+    function sharePendingItems() {
+      if (pendingItems.length > 0) {
+        const message = "Pendientes:\n" + pendingItems.join("\n");
+        const url = "https://wa.me/?text=" + encodeURIComponent(message);
+        window.open(url, '_blank');
+      }
+    }
+
+    // Transición para avanzar al siguiente ítem
+    function nextItem() {
+      checklistItem.style.opacity = 0;
+      progress.style.opacity = 0;
+      setTimeout(() => {
+        showCurrentItem();
+        checklistItem.style.opacity = 1;
+        progress.style.opacity = 1;
+      }, 300);
+    }
+
+    // Evento para confirmar el ítem actual
     confirmButton.addEventListener('click', () => {
       if (currentItemIndex < currentChecklist.items.length) {
         currentItemIndex++;
-        showCurrentItem();
+        nextItem();
       } else {
-        currentItemIndex = 0;
-        confirmButton.textContent = "Confirmar";
-        showCurrentItem();
+        // Reinicia el checklist
+        startChecklist(checklists.indexOf(currentChecklist));
       }
     });
+
+    // Evento para marcar el ítem actual como pendiente
+    pendingButton.addEventListener('click', () => {
+      if (currentItemIndex < currentChecklist.items.length) {
+        pendingItems.push(currentChecklist.items[currentItemIndex]);
+        currentItemIndex++;
+        nextItem();
+      }
+    });
+
+    // Evento para compartir pendientes por WhatsApp
+    shareButton.addEventListener('click', sharePendingItems);
 
     // Inicialización
     populateMenu();
