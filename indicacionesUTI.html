@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Indicaciones Lanari</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #f5f5f5;
+    }
+
+    header {
+      background-color: #00695c;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .menu {
+      background: #004d40;
+      padding: 1rem;
+    }
+
+    .menu button {
+      display: block;
+      width: 100%;
+      background-color: #00796b;
+      color: white;
+      border: none;
+      padding: 1rem;
+      margin: 0.3rem 0;
+      font-size: 1rem;
+      border-radius: 8px;
+      text-align: left;
+    }
+
+    .container {
+      padding: 1rem;
+    }
+
+    .card {
+      background: white;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .card h2 {
+      color: #00695c;
+      margin-top: 0;
+    }
+
+    .card p {
+      margin: 0.3rem 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Indicaciones Frecuentes - Lanari</h1>
+  </header>
+
+  <div class="menu">
+    <button onclick="location.href='#noradrenalina'">Noradrenalina</button>
+    <button onclick="location.href='#adrenalina'">Adrenalina</button>
+    <button onclick="location.href='#ntg'">Nitroglicerina (NTG)</button>
+    <button onclick="location.href='#dobutamina'">Dobutamina</button>
+    <button onclick="location.href='#isoproterenol'">Isoproterenol</button>
+    <button onclick="location.href='#dopamina'">Dopamina</button>
+    <button onclick="location.href='#propofol'">Propofol</button>
+    <button onclick="location.href='#midazolam'">Midazolam</button>
+    <button onclick="location.href='#fentanilo'">Fentanilo</button>
+    <button onclick="location.href='#furosemida'">Furosemida en bomba</button>
+    <button onclick="location.href='#amiodarona'">Amiodarona</button>
+    <button onclick="location.href='#fenitoina'">Fenitoína</button>
+    <button onclick="location.href='#calcio'">Gluconato de calcio</button>
+    <button onclick="location.href='#heparina'">Heparina</button>
+  </div>
+
+  <div class="container">
+
+    <div class="card" id="noradrenalina">
+      <h2>NORADRENALINA</h2>
+      <p><strong>Preparación:</strong> 8 mg (2 ampollas) en 100 ml de dextrosa al 5%</p>
+      <p><strong>Dosis habitual:</strong> Hasta 1 µg/kg/min (1 "gama")</p>
+    </div>
+
+    <div class="card" id="adrenalina">
+      <h2>ADRENALINA</h2>
+      <p><strong>Preparación:</strong> 5 mg en 50 ml de dextrosa al 5%</p>
+      <p><strong>Dosis:</strong> 0,01 a 0,1 µg/kg/min</p>
+    </div>
+
+    <div class="card" id="ntg">
+      <h2>NITROGLICERINA (NTG)</h2>
+      <p><strong>Preparación:</strong> 50 mg (2 ampollas) en 250 ml de dextrosa al 5%</p>
+      <p><strong>Uso:</strong> Vasodilatador en emergencias hipertensivas y edema agudo de pulmón</p>
+    </div>
+
+    <div class="card" id="dobutamina">
+      <h2>DOBUTAMINA</h2>
+      <p><strong>Preparación:</strong> 500 mg (2 ampollas) en 100 ml de dextrosa al 5%</p>
+      <p><strong>Dosis:</strong> 5 a 15 µg/kg/min</p>
+      <p><strong>Uso:</strong> Inotrópico positivo en shock cardiogénico</p>
+    </div>
+
+    <div class="card" id="isoproterenol">
+      <h2>ISOPROTERENOL</h2>
+      <p><strong>Preparación:</strong> 5 mg (5 ampollas) en 250 ml de dextrosa al 5%</p>
+      <p><strong>Dosis:</strong> 2 a 10 mcg/min</p>
+      <p><strong>Uso:</strong> Bradicardias refractarias, HTA con bradicardia</p>
+      <p><strong>Mecanismo:</strong> Cronotrópico β1 y vasodilatador β2</p>
+    </div>
+
+    <div class="card" id="dopamina">
+      <h2>DOPAMINA</h2>
+      <p><strong>Preparación:</strong> 400 mg en 100 ml de dextrosa al 5%</p>
+      <p><strong>Dosis según efecto buscado:</strong></p>
+      <ul>
+        <li>Hasta 5 µg/kg/min: Vasodilatador (receptores dopaminérgicos)</li>
+        <li>5–10 µg/kg/min: Cronotrópico e inotrópico β1</li>
+        <li>10–15 µg/kg/min: Vasoconstrictor α1</li>
+      </ul>
+    </div>
+
+    <div class="card" id="propofol">
+      <h2>PROPOFOL</h2>
+      <p><strong>Preparación:</strong> 5 ampollas (500 mg en total) sin diluir</p>
+      <p><strong>Dosis:</strong> 5 a 50 µg/kg/min</p>
+      <p><strong>Uso:</strong> Sedación en UTI</p>
+    </div>
+
+    <div class="card" id="midazolam">
+      <h2>MIDAZOLAM</h2>
+      <p><strong>Preparación:</strong> 150 mg (10 ampollas) en 100 ml de solución fisiológica</p>
+      <p><strong>Dosis:</strong> Individualizada. No se calcula en µg/kg/min.</p>
+      <p><strong>Uso:</strong> Sedación continua</p>
+    </div>
+
+    <div class="card" id="fentanilo">
+      <h2>FENTANILO</h2>
+      <p><strong>Dosis:</strong> 0,75 mg por día</p>
+      <p><strong>Preparación:</strong> en 100 ml de solución fisiológica</p>
+      <p><strong>Uso:</strong> Analgesia en cuidados críticos</p>
+    </div>
+
+    <div class="card" id="furosemida">
+      <h2>FUROSEMIDA (en bomba)</h2>
+      <p><strong>Preparación:</strong> 400 mg (20 ampollas) en 100 ml de solución fisiológica</p>
+      <p><strong>Velocidad de infusión:</strong> 4,1 ml/hora</p>
+      <p><strong>Uso:</strong> Diurético de asa en edemas severos o fallo cardíaco</p>
+    </div>
+
+    <div class="card" id="amiodarona">
+      <h2>AMIODARONA</h2>
+      <p><strong>Dosis de carga:</strong> 5 a 10 mg/kg en 250 ml, pasar en 1 hora</p>
+      <p><strong>Mantenimiento:</strong> 10 a 15 mg/kg en 500 ml en 24 horas</p>
+      <p><strong>Uso:</strong> Arritmias ventriculares o supraventriculares</p>
+    </div>
+
+    <div class="card" id="fenitoina">
+      <h2>FENITOÍNA</h2>
+      <p><strong>Dosis de carga:</strong> 15 a 20 mg/kg en 1 hora</p>
+      <p><strong>Mantenimiento:</strong> 100 mg cada 8 horas (luego de 12 horas de la carga)</p>
+      <p><strong>Efectos adversos:</strong> Hipotensión, bradicardia</p>
+    </div>
+
+    <div class="card" id="calcio">
+      <h2>GLUCONATO DE CALCIO</h2>
+      <p><strong>Dosis:</strong> 2 gramos en 50 ml de dextrosa al 5%</p>
+      <p><strong>Administración:</strong> Infusión lenta (30 minutos)</p>
+      <p><strong>Uso:</strong> Hipocalcemia, cardioprotección en hiperpotasemia</p>
+    </div>
+
+    <div class="card" id="heparina">
+      <h2>HEPARINA SÓDICA</h2>
+      <p><strong>Preparación:</strong> 25.000 UI en 250 ml de dextrosa al 5%</p>
+      <p><strong>Velocidad de infusión:</strong> 10,5 ml/h (equivale a 25.000 UI/día)</p>
+      <p><strong>Uso:</strong> Anticoagulación continua</p>
+    </div>
+
+  </div>
+
+</body>
+</html>
