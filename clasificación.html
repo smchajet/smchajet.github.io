@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IDIM Patient Classification System</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 1rem;
+      background: #f2f2f2;
+      color: #222;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #2c3e50;
+    }
+
+    #controls {
+      background: white;
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-top: 1rem;
+      font-size: 0.95rem;
+    }
+
+    input[type="text"], input[type="range"] {
+      width: 100%;
+      margin-top: 4px;
+    }
+
+    canvas {
+      width: 100%;
+      max-width: 400px;
+      height: auto;
+      background: white;
+      border: 3px solid #5d4037;
+      display: block;
+      margin: 1rem auto;
+      border-radius: 8px;
+    }
+
+    #hideBtn, #downloadBtn {
+      background: #34495e;
+      color: white;
+      padding: 0.6rem;
+      border: none;
+      border-radius: 6px;
+      margin-top: 1rem;
+      width: 100%;
+      font-size: 0.95rem;
+    }
+
+    #downloadBtn {
+      background: #27ae60;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>IDIM Patient Classification System</h1>
+
+  <div id="controls">
+    <label>Nombre del paciente:</label>
+    <input type="text" id="nombre" placeholder="Ej: Juan Pérez" oninput="draw()"/>
+
+    <label>Eje SOCIAL ⟷ FETICHE DEL JEFE DE SALA</label>
+    <input type="range" id="xVal" min="-100" max="100" value="0" oninput="draw()">
+
+    <label>Eje CAÑO ⬆ / FAVORITO ⬇</label>
+    <input type="range" id="yVal" min="-100" max="100" value="0" oninput="draw()">
+
+    <button id="hideBtn" onclick="toggleControls()">Mostrar solo ficha</button>
+    <button id="downloadBtn" onclick="downloadImage()">Descargar ficha JPG</button>
+  </div>
+
+  <canvas id="compassCanvas" width="400" height="600"></canvas>
+
+  <script>
+    const canvas = document.getElementById("compassCanvas");
+    const ctx = canvas.getContext("2d");
+    const nombreInput = document.getElementById("nombre");
+    const xInput = document.getElementById("xVal");
+    const yInput = document.getElementById("yVal");
+
+    function draw() {
+      const nombre = nombreInput.value || "Paciente sin nombre";
+      const x = parseInt(xInput.value);
+      const y = parseInt(yInput.value);
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Fondo blanco total
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Marco tipo carta
+      ctx.strokeStyle = "#5d4037";
+      ctx.lineWidth = 4;
+      ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
+
+      // Nombre estilo título de carta
+      ctx.fillStyle = "#4e342e";
+      ctx.fillRect(20, 20, canvas.width - 40, 40);
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 18px serif";
+      ctx.fillText(nombre.toUpperCase(), 30, 48);
+
+      // Zona de gráfico central
+      const graphX = 50;
+      const graphY = 80;
+      const graphSize = 300;
+
+      // Marco del gráfico
+      ctx.strokeStyle = "#000";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(graphX, graphY, graphSize, graphSize);
+
+      // Ejes
+      ctx.beginPath();
+      ctx.moveTo(graphX + graphSize / 2, graphY);
+      ctx.lineTo(graphX + graphSize / 2, graphY + graphSize);
+      ctx.moveTo(graphX, graphY + graphSize / 2);
+      ctx.lineTo(graphX + graphSize, graphY + graphSize / 2);
+      ctx.stroke();
+
+      // Etiquetas centrales
+      ctx.fillStyle = "#000";
+      ctx.font = "bold 12px arial-black";
+      ctx.fillText("SOCIAL", graphX + 5, graphY + graphSize / 2 - 10);
+      ctx.fillText("FETICHE DEL JEFE", graphX + graphSize - 120, graphY + graphSize / 2 - 10);
+      ctx.fillText("CAÑO", graphX + graphSize / 2 - 15, graphY + 15);
+      ctx.fillText("FAVORITO", graphX + graphSize / 2 - 25, graphY + graphSize - 5);
+
+      // Esquinas
+      ctx.font = "bold 11px sans-serif";
+      ctx.fillText("Judicial", graphX + 5, graphY + 15);
+      ctx.fillText("Boomerang", graphX + graphSize - 90, graphY + 15);
+      ctx.fillText("Viejecilla tierna", graphX + 5, graphY + graphSize - 5);
+      ctx.fillText("Ateneo", graphX + graphSize - 65, graphY + graphSize - 5);
+
+      // Punto del paciente
+      const px = graphX + graphSize / 2 + (x * (graphSize / 2) / 100);
+      const py = graphY + graphSize / 2 - (y * (graphSize / 2) / 100);
+      ctx.beginPath();
+      ctx.arc(px, py, 7, 0, 2 * Math.PI);
+      ctx.fillStyle = "#d32f2f";
+      ctx.fill();
+
+      // Texto tipo descripción (opcional)
+      ctx.fillStyle = "#333";
+      ctx.font = "italic 12px serif";
+      ctx.fillText("Harrison T.R., Cecil R.L. Cañología Geriátrica, vol. 69, n.º 4, pp. 420–429, 2025.", 20, canvas.height - 40);
+    }
+
+    function toggleControls() {
+      const controls = document.getElementById("controls");
+      controls.style.display = controls.style.display === "none" ? "block" : "none";
+    }
+
+    function downloadImage() {
+      const link = document.createElement("a");
+      link.download = (nombreInput.value || "ficha_paciente") + ".jpg";
+      link.href = canvas.toDataURL("image/jpeg", 1.0);
+      link.click();
+    }
+
+    draw();
+  </script>
+
+</body>
+</html>
