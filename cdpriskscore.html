@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>IDIM Lanari's CDP Risk Score — Calculadora</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#06b6d4;--text:#e6eef6;--muted:#9fb3c6}
+    *{box-sizing:border-box}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; margin:0; background:linear-gradient(180deg,#071027 0%, #07172b 100%); color:var(--text); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:18px}
+    .card{width:100%; max-width:760px; background:var(--card); border-radius:14px; padding:18px; box-shadow:0 6px 24px rgba(2,6,23,0.6)}
+    h1{font-size:18px;margin:0 0 8px}
+    p.lead{margin:0 0 14px;color:var(--muted);font-size:13px}
+    form{display:grid;gap:12px}
+    .grid{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    @media (max-width:640px){.grid{grid-template-columns:1fr}}
+    label.option{display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);border:1px solid rgba(255,255,255,0.02)}
+    input[type=checkbox]{width:20px;height:20px;margin-top:3px}
+    .meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .btn{display:inline-block;padding:10px 14px;border-radius:10px;border:none;background:var(--accent);color:#02131a;font-weight:600;font-size:15px}
+    .secondary{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--text);padding:9px 12px}
+    .result{margin-top:10px;padding:12px;background:linear-gradient(90deg, rgba(6,182,212,0.04), rgba(6,182,212,0.02));border-radius:10px;border:1px solid rgba(6,182,212,0.12)}
+    .bar{height:14px;border-radius:8px;background:rgba(255,255,255,0.06);overflow:hidden}
+    .bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#0ea5a3);width:0%}
+    small{color:var(--muted)}
+    footer{font-size:12px;color:var(--muted);margin-top:12px}
+  </style>
+</head>
+<body>
+  <main class="card" role="main">
+    <h1>IDIM Lanari's CDP Risk Score</h1>
+    <p class="lead">Seleccioná las características o eventos ocurridos durante la internación. La calculadora expresará un porcentaje aproximado de riesgo de "clavado de punta" (mapéo lineal sobre el puntaje máximo).</p>
+
+    <form id="scoreForm" autocomplete="off">
+      <div class="grid">
+        <label class="option"><input type="checkbox" name="item" data-points="1"> <div><strong>Excitación psicomotriz</strong><br><small>No cedió con una sola dosis de neurolépticos — 1 punto</small></div></label>
+        <label class="option"><input type="checkbox" name="item" data-points="2"> <div><strong>Paciente pusilánime</strong><br><small>2 puntos</small></div></label>
+        <label class="option"><input type="checkbox" name="item" data-points="2"> <div><strong>Familia esquizotípica</strong><br><small>2 puntos</small></div></label>
+        <label class="option"><input type="checkbox" name="item" data-points="2"> <div><strong>Olor a colostomía</strong><br><small>2 puntos</small></div></label>
+        <label class="option"><input type="checkbox" name="item" data-points="3"> <div><strong>Olor a colostomía (ocupa toda la sala)</strong><br><small>3 puntos</small></div></label>
+        <label class="option"><input type="checkbox" name="item" data-points="3"> <div><strong>Cirugía abdominal</strong><br><small>3 puntos</small></div></label>
+        <label class="option"><input type="checkbox" name="item" data-points="3"> <div><strong>Derivación al Sanatorio Güemes</strong><br><small>3 puntos</small></div></label>
+        <label class="option"><input type="checkbox" name="item" data-points="2"> <div><strong>No capita pero conoce a alguien de APUBA</strong><br><small>2 puntos</small></div></label>
+        <label class="option"><input type="checkbox" name="item" data-points="3"> <div><strong>Colocación de endoprótesis de aorta</strong><br><small>3 puntos</small></div></label>
+        <label class="option"><input type="checkbox" name="item" data-points="5"> <div><strong>Paciente de hemodinamia</strong><br><small>5 puntos</small></div></label>
+      </div>
+
+      <div class="meta">
+        <button type="button" class="btn" id="calcBtn">Calcular riesgo</button>
+        <button type="button" class="secondary" id="resetBtn">Limpiar</button>
+        <div style="margin-left:auto;text-align:right">
+          <div style="font-size:13px">Puntaje: <span id="score">0</span> / <strong id="maxScore">26</strong></div>
+          <div style="font-size:13px">Riesgo estimado: <strong id="percent">0%</strong></div>
+        </div>
+      </div>
+
+      <div class="result" id="result" aria-live="polite" style="display:none">
+        <div style="display:flex;gap:12px;align-items:center">
+          <div style="flex:1">
+            <div class="bar" aria-hidden="true"><i id="fillBar"></i></div>
+            <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:13px"><small id="categoryText">-</small><small id="breakdown">Detalle: 0 pts</small></div>
+          </div>
+          <div style="width:110px;text-align:center">
+            <div style="font-size:18px;font-weight:700" id="percentBig">0%</div>
+            <small id="categorySmall">Bajo</small>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        Nota: Este porcentaje es una aproximación lineal basada en el puntaje máximo (26). No sustituye la valoración clínica. Úsese como herramienta rápida de cribado.
+      </footer>
+    </form>
+
+  </main>
+
+  <script>
+    (function(){
+      const maxPoints = 26; // suma máxima de puntos según lista
+      const calcBtn = document.getElementById('calcBtn');
+      const resetBtn = document.getElementById('resetBtn');
+      const scoreEl = document.getElementById('score');
+      const percentEl = document.getElementById('percent');
+      const percentBig = document.getElementById('percentBig');
+      const fillBar = document.getElementById('fillBar');
+      const resultBox = document.getElementById('result');
+      const categoryText = document.getElementById('categoryText');
+      const categorySmall = document.getElementById('categorySmall');
+      const breakdown = document.getElementById('breakdown');
+
+      function compute(){
+        const checks = Array.from(document.querySelectorAll('input[name=item]'));
+        let total = 0;
+        const picked = [];
+        checks.forEach(ch => {
+          if(ch.checked){
+            const p = Number(ch.dataset.points) || 0;
+            total += p;
+            // capture label text for breakdown
+            const label = ch.closest('label')?.innerText?.trim()?.replace(/[\n\r]+/g,' — ').slice(0,120) || '';
+            picked.push(`${label} (${p} pts)`);
+          }
+        });
+
+        const pct = (total / maxPoints) * 100;
+        const pctFixed = Math.round(pct*100)/100; // 2 decimals
+
+        scoreEl.textContent = total;
+        percentEl.textContent = pctFixed + '%';
+        percentBig.textContent = pctFixed + '%';
+        fillBar.style.width = Math.min(100, Math.max(0, pctFixed)) + '%';
+        breakdown.textContent = 'Detalle: ' + total + ' pts';
+
+        // category mapping (simple heuristic)
+        let cat = 'Bajo';
+        if(pctFixed >= 75) cat = 'Muy alto';
+        else if(pctFixed >= 50) cat = 'Alto';
+        else if(pctFixed >= 30) cat = 'Moderado';
+
+        categoryText.textContent = cat;
+        categorySmall.textContent = cat;
+
+        // show result box
+        resultBox.style.display = 'block';
+
+        // make a11y-friendly summary in aria-live region
+        resultBox.setAttribute('aria-label', `Riesgo ${pctFixed} por ciento. Categoria: ${cat}. Puntaje ${total} sobre ${maxPoints}.`);
+
+        return {total, pct: pctFixed, category: cat, items: picked};
+      }
+
+      calcBtn.addEventListener('click', compute);
+
+      resetBtn.addEventListener('click', function(){
+        document.querySelectorAll('input[name=item]').forEach(i => i.checked = false);
+        scoreEl.textContent = '0';
+        percentEl.textContent = '0%';
+        percentBig.textContent = '0%';
+        fillBar.style.width = '0%';
+        breakdown.textContent = 'Detalle: 0 pts';
+        categoryText.textContent = '-';
+        categorySmall.textContent = 'Bajo';
+        resultBox.style.display = 'none';
+      });
+
+      // quick compute when toggling a checkbox (optional)
+      document.querySelectorAll('input[name=item]').forEach(i => i.addEventListener('change', ()=>{
+        // update simple live numbers
+        const totalLive = Array.from(document.querySelectorAll('input[name=item]'))
+          .filter(c=>c.checked).reduce((s,c)=>s + Number(c.dataset.points || 0),0);
+        scoreEl.textContent = totalLive;
+      }));
+
+      // allow pressing Enter to calculate
+      document.getElementById('scoreForm').addEventListener('submit', function(e){ e.preventDefault(); compute(); });
+
+    })();
+  </script>
+</body>
+</html>
